@@ -68,3 +68,10 @@ MIN_SPECIFICITY: float = 0.70        # [C] garde-fou : au moins 70 % des normaux
 MLFLOW_EXPERIMENT: str = "cardioagent-audio-engine"
 # Par défaut : dossier mlruns/ local. Sur Colab : redéfini vers Google Drive.
 MLFLOW_TRACKING_URI: str = os.getenv("MLFLOW_TRACKING_URI", (PROJECT_ROOT / "mlruns").as_uri())
+
+
+# ---------- Deep learning ----------
+BATCH_SIZE: int = 64                 # [C] segments par lot d'entraînement
+MAX_EPOCHS: int = 40                 # [C] nombre maximal de passages sur le train
+PATIENCE: int = 6                    # [C] arrêt anticipé après 6 époques sans amélioration
+WEIGHT_DECAY: float = 1e-4           # [C] régularisation L2 (limite le sur-apprentissage)

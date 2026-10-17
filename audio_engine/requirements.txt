@@ -8,3 +8,5 @@ jupyter
 scikit-learn
 pytest
 mlflow>=2.17,<3
+torch
+torchvision
