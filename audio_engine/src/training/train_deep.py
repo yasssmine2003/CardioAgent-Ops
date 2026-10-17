@@ -88,7 +88,8 @@ def fit_and_validate(module, params: dict, data: dict, norm: tuple[float, float]
     generator = torch.Generator().manual_seed(config.RANDOM_SEED)
 
     history = {"train_loss": [], "val_loss": [], "val_recall_pathological": [], "val_specificity": []}
-    best_score, best_state, best_epoch, waited = -np.inf, None, 0, 0
+    best_score, best_state, best_epoch = -np.inf, None, 0
+    best_val_loss, waited = np.inf, 0
     start = time.perf_counter()
     for epoch in range(1, config.MAX_EPOCHS + 1):
         train_loss = train_one_epoch(model, data["X_train"], data["y_train"], optimizer, loss_fn, generator)
@@ -104,11 +105,15 @@ def fit_and_validate(module, params: dict, data: dict, norm: tuple[float, float]
             history[key].append(value)
             mlflow.log_metric(key, value, step=epoch)
 
+        # 1) Meilleure époque = meilleur score selon le critère du cahier des charges
         if score > best_score:
-            best_score, best_state, best_epoch, waited = score, copy.deepcopy(model.state_dict()), epoch, 0
+            best_score, best_state, best_epoch = score, copy.deepcopy(model.state_dict()), epoch
+        # 2) Arrêt anticipé = quand la perte de validation ne baisse plus (le modèle n'apprend plus)
+        if val_loss < best_val_loss:
+            best_val_loss, waited = val_loss, 0
         else:
             waited += 1
-            if waited >= config.PATIENCE:  # early stopping
+            if waited >= config.PATIENCE:
                 break
 
     train_time = time.perf_counter() - start

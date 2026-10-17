@@ -73,5 +73,5 @@ MLFLOW_TRACKING_URI: str = os.getenv("MLFLOW_TRACKING_URI", (PROJECT_ROOT / "mlr
 # ---------- Deep learning ----------
 BATCH_SIZE: int = 64                 # [C] segments par lot d'entraînement
 MAX_EPOCHS: int = 40                 # [C] nombre maximal de passages sur le train
-PATIENCE: int = 6                    # [C] arrêt anticipé après 6 époques sans amélioration
+PATIENCE: int = 8                   # [C] arrêt anticipé après 8 époques sans amélioration
 WEIGHT_DECAY: float = 1e-4           # [C] régularisation L2 (limite le sur-apprentissage)
