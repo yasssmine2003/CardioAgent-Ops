@@ -57,3 +57,14 @@ FEATURES_1D_PATH: Path = FEATURES_DIR / "features_1d.npy"       # (N, 28)      -
 MEL_PATH: Path = FEATURES_DIR / "mel_spectrograms.npy"         # (N, 32, 157) -> CNN, ResNet, Transformer
 FEATURES_META_PATH: Path = FEATURES_DIR / "metadata.csv"        # une ligne par segment (même ordre)
 FEATURES_INFO_PATH: Path = FEATURES_DIR / "features_info.json"  # paramètres utilisés
+
+
+
+# ---------- Évaluation et sélection ----------
+DECISION_THRESHOLD: float = 0.5      # probabilité au-dessus de laquelle on prédit "pathologique"
+MIN_SPECIFICITY: float = 0.70        # [C] garde-fou : au moins 70 % des normaux bien classés
+
+# ---------- MLflow ----------
+MLFLOW_EXPERIMENT: str = "cardioagent-audio-engine"
+# Par défaut : dossier mlruns/ local. Sur Colab : redéfini vers Google Drive.
+MLFLOW_TRACKING_URI: str = os.getenv("MLFLOW_TRACKING_URI", (PROJECT_ROOT / "mlruns").as_uri())
