@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      # Montage du volume nommé wav_dataset
+      - wav_dataset:/app/uploads
+    restart: always
+
+# Déclaration du volume nommé
+volumes:
+  wav_dataset:
+    name: wav_dataset
+    driver: local

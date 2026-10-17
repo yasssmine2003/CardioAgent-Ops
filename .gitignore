@@ -1,0 +1,25 @@
+# Environnements virtuels
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Données (trop lourdes, téléchargeables)
+data/
+wav_dataset/
+*.npy
+*.wav
+
+# Entraînement et MLflow
+mlruns/
+mlartifacts/
+*.pt
+*.pth
+
+# Fichiers système
+.DS_Store
+Thumbs.dbs

@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+data/
+mlruns/
+*.pt
+*.part

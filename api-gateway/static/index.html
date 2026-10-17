@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Gateway - Sélection WAV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --primary: #3b82f6;
+            --success: #10b981;
+            --error: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .container { width: 100%; max-width: 450px; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 32px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); }
+        .header { text-align: center; margin-bottom: 24px; }
+        .badge { display: inline-block; background-color: rgba(59, 130, 246, 0.1); color: var(--primary); font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; margin-bottom: 12px; border: 1px solid rgba(59, 130, 246, 0.2); }
+        .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .header p { font-size: 14px; color: var(--text-muted); }
+
+        .drop-zone { border: 2px dashed var(--border-color); border-radius: 12px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background-color: rgba(15, 23, 42, 0.4); position: relative; }
+        .drop-zone:hover { border-color: var(--primary); background-color: rgba(59, 130, 246, 0.05); }
+        .drop-zone input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
+        .output-box { margin-top: 20px; padding: 16px; border-radius: 10px; background-color: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); display: none; text-align: center; }
+        .output-box.active { display: block; animation: fadeIn 0.3s; }
+        .file-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .file-name { font-size: 15px; font-weight: 600; color: var(--success); word-break: break-all; }
+        .file-error { font-size: 14px; font-weight: 600; color: var(--error); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <span class="badge">API Gateway</span>
+            <h1>Sélection Fichier Audio</h1>
+            <p>Choisissez un fichier au format .wav</p>
+        </div>
+
+        <div class="drop-zone">
+            <p><span style="color:var(--primary); font-weight:600;">Cliquez pour choisir</span> un fichier .wav</p>
+            <input type="file" id="audioFile" accept=".wav">
+        </div>
+
+        <div class="output-box" id="outputBox">
+            <div class="file-label" id="boxLabel">Fichier sélectionné :</div>
+            <div class="file-name" id="fileNameDisplay"></div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('audioFile');
+        const outputBox = document.getElementById('outputBox');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const boxLabel = document.getElementById('boxLabel');
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                outputBox.classList.add('active');
+                if (file.name.toLowerCase().endsWith('.wav')) {
+                    boxLabel.textContent = "Fichier sélectionné :";
+                    fileNameDisplay.textContent = file.name;
+                    fileNameDisplay.className = "file-name";
+                } else {
+                    boxLabel.textContent = "Erreur de format :";
+                    fileNameDisplay.textContent = "Veuillez choisir un fichier .wav";
+                    fileNameDisplay.className = "file-error";
+                    fileInput.value = '';
+                }
+            } else {
+                outputBox.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
