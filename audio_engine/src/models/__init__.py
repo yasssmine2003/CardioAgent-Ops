@@ -11,7 +11,7 @@ CLASSICAL_MODELS = {
 }
 
 try:
-    from src.models import cnn
-    DEEP_MODELS = {"cnn": cnn}
+    from src.models import cnn, resnet
+    DEEP_MODELS = {"cnn": cnn, "resnet18": resnet}
 except ImportError:  # PyTorch absent
     DEEP_MODELS = {}

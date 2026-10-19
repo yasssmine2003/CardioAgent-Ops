@@ -27,3 +27,19 @@ def test_normalized_model_standardizes_input():
     model = NormalizedModel(Spy(), mean=-20.0, std=10.0)
     model(torch.full((2, 1, *MEL_SHAPE), -10.0))
     assert torch.allclose(seen["x"], torch.ones_like(seen["x"]))
+
+
+def test_resnet_output_shape():
+    """ResNet18 adapté : 1 canal en entrée, un score par segment (sans téléchargement des poids)."""
+    from src.models import resnet
+    model = resnet.build_model(dropout=0.3, pretrained=False).eval()
+    assert model.net.conv1.in_channels == 1
+    assert model(torch.randn(4, 1, *MEL_SHAPE)).shape == (4,)
+
+
+def test_resnet_freeze_backbone():
+    """En extraction de caractéristiques, seule la tête (512 poids + 1 biais) est entraînable."""
+    from src.models import resnet
+    from src.models.common import count_parameters
+    model = resnet.build_model(dropout=0.3, freeze_backbone=True, pretrained=False)
+    assert count_parameters(model, trainable_only=True) == 513

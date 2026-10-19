@@ -23,6 +23,6 @@ class NormalizedModel(nn.Module):
         return self.backbone((x - self.mean) / self.std)
 
 
-def count_parameters(model: nn.Module) -> int:
-    """Nombre de paramètres entraînables."""
-    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+def count_parameters(model: nn.Module, trainable_only: bool = False) -> int:
+    """Nombre de paramètres du modèle (ou seulement de ceux qui sont entraînés)."""
+    return sum(p.numel() for p in model.parameters() if p.requires_grad or not trainable_only)

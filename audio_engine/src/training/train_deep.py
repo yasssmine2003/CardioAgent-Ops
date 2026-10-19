@@ -79,8 +79,8 @@ def fit_and_validate(module, params: dict, data: dict, norm: tuple[float, float]
     """Entraîne une combinaison ; garde l'époque au meilleur score de validation."""
     set_seed()
     model = NormalizedModel(module.build_model(**params), *norm).to(DEVICE)
-    optimizer = torch.optim.Adam(model.parameters(), lr=params["learning_rate"],
-                                 weight_decay=config.WEIGHT_DECAY)
+    trainable = [p for p in model.parameters() if p.requires_grad]  # couches figées exclues
+    optimizer = torch.optim.Adam(trainable, lr=params["learning_rate"],
     # Rééquilibrage : une erreur sur un malade pèse (nb normaux / nb malades) fois plus
     n_pos = float(data["y_train"].sum())
     pos_weight = torch.tensor((len(data["y_train"]) - n_pos) / n_pos, device=DEVICE)
@@ -203,7 +203,8 @@ def run_deep(model_name: str) -> dict[str, float]:
         log_metrics(compute_metrics(*aggregate_by_recording(data["meta_test"], test_proba)), "rec_test_")
         mlflow.log_metrics({"selection_score": best.score, "training_time_s": best.train_time_s,
                             "best_epoch": best.best_epoch, "inference_time_ms": inference_ms,
-                            "n_parameters": count_parameters(model)})
+                            "n_parameters": count_parameters(model),
+                            "n_trainable_parameters": count_parameters(model, trainable_only=True)})
         if DEVICE.type == "cuda":
             mlflow.log_metric("gpu_memory_peak_mb", torch.cuda.max_memory_allocated() / 1e6)
         log_figure(plot_confusion_matrix(data["y_test_np"], test_proba, f"{model_name} — test (segments)"),
