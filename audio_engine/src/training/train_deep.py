@@ -81,6 +81,7 @@ def fit_and_validate(module, params: dict, data: dict, norm: tuple[float, float]
     model = NormalizedModel(module.build_model(**params), *norm).to(DEVICE)
     trainable = [p for p in model.parameters() if p.requires_grad]  # couches figées exclues
     optimizer = torch.optim.Adam(trainable, lr=params["learning_rate"],
+                                 weight_decay=config.WEIGHT_DECAY)
     # Rééquilibrage : une erreur sur un malade pèse (nb normaux / nb malades) fois plus
     n_pos = float(data["y_train"].sum())
     pos_weight = torch.tensor((len(data["y_train"]) - n_pos) / n_pos, device=DEVICE)
