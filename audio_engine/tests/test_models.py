@@ -43,3 +43,10 @@ def test_resnet_freeze_backbone():
     from src.models.common import count_parameters
     model = resnet.build_model(dropout=0.3, freeze_backbone=True, pretrained=False)
     assert count_parameters(model, trainable_only=True) == 513
+
+
+def test_transformer_cnn_output_shape():
+    """Transformer-CNN : un lot de 4 Mel-spectrogrammes -> 4 scores."""
+    from src.models import transformer_cnn
+    model = transformer_cnn.build_model(dropout=0.1).eval()
+    assert model(torch.randn(4, 1, *MEL_SHAPE)).shape == (4,)

@@ -60,6 +60,17 @@ def predict_proba(model: nn.Module, X: torch.Tensor, batch_size: int = 512) -> n
     return torch.sigmoid(torch.cat(scores)).cpu().numpy()
 
 
+@torch.no_grad()
+def evaluate_loss(model: nn.Module, X: torch.Tensor, y: torch.Tensor, loss_fn,
+                  batch_size: int = 512) -> float:
+    """Perte moyenne sur un ensemble, calculée par lots (limite la mémoire GPU)."""
+    model.eval()
+    total = 0.0
+    for i in range(0, len(X), batch_size):
+        total += loss_fn(model(X[i:i + batch_size]), y[i:i + batch_size]).item() * len(X[i:i + batch_size])
+    return total / len(X)
+
+
 def train_one_epoch(model, X, y, optimizer, loss_fn, generator) -> float:
     """Un passage complet sur le train, par lots mélangés. Retourne la perte moyenne."""
     model.train()
@@ -94,9 +105,7 @@ def fit_and_validate(module, params: dict, data: dict, norm: tuple[float, float]
     start = time.perf_counter()
     for epoch in range(1, config.MAX_EPOCHS + 1):
         train_loss = train_one_epoch(model, data["X_train"], data["y_train"], optimizer, loss_fn, generator)
-        with torch.no_grad():
-            model.eval()
-            val_loss = loss_fn(model(data["X_val"]), data["y_val"]).item()
+        val_loss = evaluate_loss(model, data["X_val"], data["y_val"], loss_fn)
         val_metrics = compute_metrics(data["y_val_np"], predict_proba(model, data["X_val"]))
         score = selection_score(val_metrics)
 
