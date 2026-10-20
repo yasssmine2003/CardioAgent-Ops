@@ -1,0 +1,66 @@
+{
+  "model_name": "cnn",
+  "family": "deep",
+  "mlflow_run_id": "e96e0f0bf41043cfaf8acd8222cf735e",
+  "onnx_file": "cardio_model.onnx",
+  "onnx_opset": 17,
+  "created_utc": "2026-10-20T20:07:58+00:00",
+  "input_name": "mel_spectrogram",
+  "input_shape": [
+    "batch",
+    1,
+    32,
+    157
+  ],
+  "output_name": "probability",
+  "output_kind": "probability_pathological",
+  "decision": {
+    "threshold": 0.6557243466377258,
+    "level": "enregistrement (moyenne des probabilités des segments)",
+    "rule": "Recall pathologique maximal avec spécificité >= 0.8 par enregistrement, choisi sur la validation",
+    "labels": {
+      "0": "normal",
+      "1": "pathologique"
+    }
+  },
+  "preprocessing": {
+    "sample_rate": 2000,
+    "segment_duration_s": 5.0,
+    "segment_hop_s": 5.0,
+    "min_duration_s": 2.0,
+    "amplitude_normalization": "z-score par enregistrement",
+    "short_audio_padding": "répétition jusqu'à la durée d'un segment",
+    "n_fft": 256,
+    "hop_length": 64,
+    "n_mels": 32,
+    "n_mfcc": 13,
+    "fmax": 1000.0,
+    "n_frames": 157
+  },
+  "metrics": {
+    "validation_recording": {
+      "recall_pathological": 0.8677685950413223,
+      "specificity": 0.8009708737864077,
+      "accuracy": 0.8161350844277674
+    },
+    "test_recording": {
+      "recall_pathological": 0.9186991869918699,
+      "specificity": 0.7956204379562044,
+      "accuracy": 0.8239700374531835,
+      "f1": 0.7902907754010695,
+      "roc_auc": 0.94611595750994
+    },
+    "test_segment": {
+      "recall_pathological": 0.9581749049429658,
+      "specificity": 0.8312925170068027,
+      "accuracy": 0.8647294589178357,
+      "f1": 0.8446241190696129,
+      "roc_auc": 0.9624557047153464
+    },
+    "onnx_max_abs_diff": 5.960464477539062e-07
+  },
+  "versions": {
+    "onnx": "1.23.2",
+    "onnxruntime": "1.31.0"
+  }
+}
