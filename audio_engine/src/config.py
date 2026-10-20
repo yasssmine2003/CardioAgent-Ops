@@ -75,3 +75,11 @@ BATCH_SIZE: int = 64                 # [C] segments par lot d'entraînement
 MAX_EPOCHS: int = 40                 # [C] nombre maximal de passages sur le train
 PATIENCE: int = 8                   # [C] arrêt anticipé après 8 époques sans amélioration
 WEIGHT_DECAY: float = 1e-4           # [C] régularisation L2 (limite le sur-apprentissage)
+
+
+# ---------- Benchmark et sélection ----------
+REPORTS_DIR: Path = DATA_DIR / "reports"                 # résultats du benchmark (sur Drive avec Colab)
+BENCHMARK_CSV_PATH: Path = REPORTS_DIR / "benchmark.csv"
+BEST_MODEL_PATH: Path = REPORTS_DIR / "best_model.json"  # modèle sélectionné + seuil -> export ONNX
+ALT_SPECIFICITY: float = 0.80                            # [C] analyse de sensibilité : exigence plus forte
+BENCHMARK_MODELS: tuple[str, ...] = ("decision_tree", "svm", "cnn", "resnet18", "transformer_cnn")
