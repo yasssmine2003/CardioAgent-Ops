@@ -15,7 +15,7 @@ DATA_DIR: Path = Path(os.getenv("AUDIO_ENGINE_DATA_DIR", PROJECT_ROOT / "data"))
 RAW_DIR: Path = DATA_DIR / "raw"              # données brutes, jamais modifiées
 PROCESSED_DIR: Path = DATA_DIR / "processed"  # inventaire, splits, index des segments
 FEATURES_DIR: Path = DATA_DIR / "features"    # caractéristiques calculées
-MODELS_DIR: Path = PROJECT_ROOT / "models"
+MODELS_DIR: Path = Path(os.getenv("AUDIO_ENGINE_MODELS_DIR", PROJECT_ROOT / "models"))
 
 DATASET_DIR: Path = RAW_DIR / "ourdataset" / "train"
 INVENTORY_PATH: Path = PROCESSED_DIR / "inventory.csv"
@@ -83,3 +83,10 @@ BENCHMARK_CSV_PATH: Path = REPORTS_DIR / "benchmark.csv"
 BEST_MODEL_PATH: Path = REPORTS_DIR / "best_model.json"  # modèle sélectionné + seuil -> export ONNX
 ALT_SPECIFICITY: float = 0.80                            # [C] analyse de sensibilité : exigence plus forte
 BENCHMARK_MODELS: tuple[str, ...] = ("decision_tree", "svm", "cnn", "resnet18", "transformer_cnn")
+
+
+# ---------- Déploiement (export ONNX) ----------
+DEPLOY_MIN_SPECIFICITY: float = 0.80                     # [C] choix validé : spécificité >= 80 % par enregistrement
+ONNX_MODEL_PATH: Path = MODELS_DIR / "cardio_model.onnx"  # [A] livrable imposé
+MODEL_CARD_PATH: Path = MODELS_DIR / "cardio_model.json"  # fiche : seuil, prétraitement, résultats
+ONNX_OPSET: int = 17

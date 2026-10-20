@@ -10,3 +10,6 @@ pytest
 mlflow>=2.17,<3
 torch
 torchvision
+onnx
+onnxruntime
+skl2onnx
