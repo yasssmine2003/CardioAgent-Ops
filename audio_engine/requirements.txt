@@ -13,3 +13,4 @@ torchvision
 onnx
 onnxruntime
 skl2onnx
+pydantic>=2
