@@ -90,3 +90,52 @@ DEPLOY_MIN_SPECIFICITY: float = 0.80                     # [C] choix validé : s
 ONNX_MODEL_PATH: Path = MODELS_DIR / "cardio_model.onnx"  # [A] livrable imposé
 MODEL_CARD_PATH: Path = MODELS_DIR / "cardio_model.json"  # fiche : seuil, prétraitement, résultats
 ONNX_OPSET: int = 17
+
+
+# ---------- Segmentation par cycles cardiaques (approche 2 : autocorrélation) ----------
+SEG_BAND_HZ: tuple[float, float] = (25.0, 400.0)  # [C] bande des bruits cardiaques (détection uniquement)
+SEG_ENVELOPE_SR: int = 50                          # [C] fréquence de l'enveloppe (1 point toutes les 20 ms)
+SEG_ENVELOPE_CUTOFF_HZ: float = 8.0                # [C] lissage de l'enveloppe homomorphique
+SEG_BPM_RANGE: tuple[int, int] = (40, 150)         # [C] rythmes cardiaques plausibles
+SEG_WINDOW_S: float = 5.0                          # [C] fenêtre glissante pour suivre le rythme
+SEG_HOP_S: float = 2.5                             # [C] pas de la fenêtre glissante
+SEG_MIN_PEAK_SPACING: float = 0.6                  # [C] battements espacés d'au moins 0,6 x cycle
+SEG_PRE_PEAK: float = 0.1                          # [C] un cycle commence 10 % de cycle avant le pic
+SEG_TOLERANCE: float = 0.3                         # [C] cycle valide si durée à +/- 30 % du cycle local
+SEG_MIN_PERIODICITY: float = 0.3                   # [C] en dessous : rythme non fiable
+SEG_MIN_VALID_CYCLES: int = 2                      # [C] en dessous : segmentation non fiable
+CYCLES_REPORT_DIR: Path = REPORTS_DIR / "cycles"
+SEG_SILENCE_FRAME_S: float = 0.05                  # [C] trames de 50 ms pour repérer les coupures
+SEG_SILENCE_RATIO: float = 0.02                    # [C] trame « plate » si son énergie < 2 % de l'énergie médiane
+SEG_MIN_SILENCE_S: float = 0.5                     # [C] une coupure dure au moins 0,5 s
+SEG_ALTERNATION_RATIO: float = 1.5                 # [C] au-delà : les battements alternent S1/S2 (demi-cycle)
+SEG_ALTERNATION_MIN: float = 0.15                  # [C] écarts entre voisins ignorés s'ils font moins de 15 %
+
+
+# ---------- Évaluation de la segmentation (annotations PhysioNet) ----------
+ANNOTATIONS_URL: str = ("https://physionet.org/files/challenge-2016/1.0.0/annotations/"
+                        "hand_corrected/training-{subset}_StateAns/{name}_StateAns.mat")
+ANNOTATIONS_DIR: Path = RAW_DIR / "annotations"       # annotations S1 / systole / S2 / diastole
+EVAL_MARGIN_S: float = 0.05                           # [C] tolérance autour d'un bruit annoté (50 ms)
+
+
+# ======================================================================
+# À COLLER TOUT EN BAS de src/config.py
+# Choix du jeu de données : "fixed" (fenêtres de 5 s fixes, résultats actuels)
+#                           "cycles" (fenêtres alignées sur les battements)
+# ======================================================================
+FEATURE_SET: str = os.getenv("AUDIO_ENGINE_FEATURE_SET", "fixed")   # [C]
+
+if FEATURE_SET == "cycles":
+    # Tout est rangé à part : les résultats « fixed » ne sont jamais écrasés
+    FEATURES_DIR = DATA_DIR / "features_cycles"
+    FEATURES_1D_PATH = FEATURES_DIR / "features_1d.npy"
+    MEL_PATH = FEATURES_DIR / "mel_spectrograms.npy"
+    FEATURES_META_PATH = FEATURES_DIR / "metadata.csv"
+    FEATURES_INFO_PATH = FEATURES_DIR / "features_info.json"
+    REPORTS_DIR = DATA_DIR / "reports_cycles"
+    BENCHMARK_CSV_PATH = REPORTS_DIR / "benchmark.csv"
+    BEST_MODEL_PATH = REPORTS_DIR / "best_model.json"
+    ONNX_MODEL_PATH = MODELS_DIR / "cycles" / "cardio_model.onnx"
+    MODEL_CARD_PATH = MODELS_DIR / "cycles" / "cardio_model.json"
+    MLFLOW_EXPERIMENT = "cardioagent-audio-engine-cycles"   # expérience MLflow séparée
