@@ -1,0 +1,15 @@
+# Service 3 seul (à fusionner avec le docker-compose du projet quand le Service 4 sera prêt)
+services:
+  audio-engine:
+    build: ./audio_engine
+    container_name: audio-engine
+    expose:
+      - "8000"            # interne : joignable par les autres conteneurs (http://audio-engine:8000)
+    ports:
+      - "8000:8000"       # pour tester depuis le PC ; à retirer en intégration finale
+    restart: unless-stopped
+    networks:
+      - cardio-net
+
+networks:
+  cardio-net:

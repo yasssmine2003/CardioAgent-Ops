@@ -13,6 +13,18 @@ services:
       - wav_dataset:/app/uploads
     restart: always
 
+  # ---------- Service 3 : audio-engine (API interne) ----------
+  audio-engine:
+    build:
+      context: ./audio_engine
+      dockerfile: Dockerfile
+    container_name: audio-engine
+    expose:
+      - "8000"            # interne : les autres conteneurs l'appellent sur http://audio-engine:8000
+    ports:
+      - "8003:8000"       # pour tester depuis le PC uniquement ; à retirer en intégration finale
+    restart: always
+
 # Déclaration du volume nommé
 volumes:
   wav_dataset:

@@ -1,0 +1,10 @@
+# Dépendances du conteneur audio-engine (inférence uniquement : ni PyTorch, ni MLflow)
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+onnxruntime>=1.18
+librosa>=0.10.2
+soundfile>=0.12
+numpy>=1.26
+scipy>=1.11
+pydantic>=2.6

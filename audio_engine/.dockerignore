@@ -1,0 +1,10 @@
+.venv/
+data/
+mlruns/
+notebooks/
+tests/
+**/__pycache__/
+*.ipynb
+models/*
+!models/cardio_model.onnx
+!models/cardio_model.json
