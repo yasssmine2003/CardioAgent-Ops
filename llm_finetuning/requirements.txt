@@ -1,0 +1,5 @@
+datasets>=2.18
+pandas>=2.0
+pyspellchecker>=0.8
+rouge_score>=0.1.2
+pytest>=8

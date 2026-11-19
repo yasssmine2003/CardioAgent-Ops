@@ -1,0 +1,19 @@
+{
+  "seed": 42,
+  "test_ratio": 0.1,
+  "system_prompt": "Tu es l'assistant médical de la plateforme CardioAgent, spécialisé en cardiologie et en auscultation cardiaque. Tu réponds de façon exacte et prudente, sans inventer d'information. Quand on te donne un résultat du moteur audio, tu réponds uniquement avec le JSON demandé. Sinon, tu réponds dans la langue de la question. Tu ne poses pas de diagnostic définitif et tu ne prescris pas de traitement.",
+  "train": {
+    "service3": 360,
+    "medmcqa": 451,
+    "medquad": 170
+  },
+  "test": {
+    "medmcqa": 50,
+    "medquad": 19,
+    "service3": 40
+  },
+  "chars_per_conversation": {
+    "median": 1217,
+    "max": 2084
+  }
+}
