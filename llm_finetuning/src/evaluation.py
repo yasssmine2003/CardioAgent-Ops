@@ -31,18 +31,22 @@ def generate_answers(model, tokenizer, conversations: list[dict], log_every: int
     results = []
     for i, conv in enumerate(conversations, start=1):
         prompt = conv["messages"][:2]                                   # system + user seulement
+        # return_dict=True : les versions récentes de transformers renvoient un dictionnaire
+        # (input_ids + attention_mask), pas directement un tableau
         inputs = tokenizer.apply_chat_template(prompt, add_generation_prompt=True,
-                                               return_tensors="pt").to(model.device)
+                                               return_tensors="pt", return_dict=True)
+        inputs = {k: v.to(model.device) for k, v in inputs.items()}
+        n_prompt = inputs["input_ids"].shape[1]
         start = time.perf_counter()
         with torch.no_grad():
-            output = model.generate(input_ids=inputs, max_new_tokens=MAX_NEW_TOKENS[conv["family"]],
+            output = model.generate(**inputs, max_new_tokens=MAX_NEW_TOKENS[conv["family"]],
                                     do_sample=False, pad_token_id=tokenizer.eos_token_id)
-        answer = tokenizer.decode(output[0, inputs.shape[1]:], skip_special_tokens=True).strip()
+        answer = tokenizer.decode(output[0, n_prompt:], skip_special_tokens=True).strip()
         results.append({"family": conv["family"], "source": conv["source"],
                         "question": conv["messages"][1]["content"],
                         "reference": conv["messages"][2]["content"], "prediction": answer,
                         "seconds": round(time.perf_counter() - start, 2),
-                        "new_tokens": int(output.shape[1] - inputs.shape[1])})
+                        "new_tokens": int(output.shape[1] - n_prompt)})
         if i % log_every == 0:
             print(f"{i}/{len(conversations)} réponses générées")
     return results
