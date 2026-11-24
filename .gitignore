@@ -23,3 +23,7 @@ mlartifacts/
 # Fichiers système
 .DS_Store
 Thumbs.dbs
+
+*.gguf
+
+llm_finetuning/mlruns/
